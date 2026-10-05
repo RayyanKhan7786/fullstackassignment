@@ -13,16 +13,10 @@ import AnalyticsModal from '@/components/AnalyticsModal';
 import SettingsModal from '@/components/SettingsModal';
 import { 
   Search, 
-  Filter, 
   LayoutList, 
   Kanban, 
-  Sparkles, 
-  Plus, 
-  RotateCcw, 
-  Calendar, 
-  Flame, 
-  CheckCircle2, 
   Loader2, 
+  CheckCircle2, 
   AlertCircle,
   X
 } from 'lucide-react';
@@ -69,7 +63,7 @@ export default function HomePage() {
     setToast({ message, type });
     setTimeout(() => {
       setToast(null);
-    }, 3500);
+    }, 3000);
   };
 
   // Load stored settings on mount
@@ -166,7 +160,7 @@ export default function HomePage() {
         });
         const data = await res.json();
         if (data.success) {
-          showToast(`Captured lead for ${formData.name}`);
+          showToast(`Created lead for ${formData.name}`);
           setIsLeadModalOpen(false);
           fetchLeads();
           fetchStats();
@@ -181,7 +175,7 @@ export default function HomePage() {
 
   // Delete Lead
   const handleDeleteLead = async (id, name) => {
-    if (!window.confirm(`Are you sure you want to delete lead "${name}"?`)) {
+    if (!window.confirm(`Delete lead "${name}"?`)) {
       return;
     }
     try {
@@ -201,7 +195,7 @@ export default function HomePage() {
     }
   };
 
-  // Quick Status Change (from Table dropdown or Kanban column advance)
+  // Status Change
   const handleStatusChange = async (id, newStatus) => {
     try {
       const res = await fetch(`/api/leads/${id}`, {
@@ -211,7 +205,7 @@ export default function HomePage() {
       });
       const data = await res.json();
       if (data.success) {
-        showToast(`Status updated to ${newStatus.replace('_', ' ')}`);
+        showToast(`Status set to ${newStatus.replace('_', ' ')}`);
         fetchLeads();
         fetchStats();
       }
@@ -231,7 +225,7 @@ export default function HomePage() {
           follow_up_status: 'drafted'
         })
       });
-      showToast('AI follow-up draft saved & lead marked as Draft Ready!');
+      showToast('Follow-up draft saved');
       fetchLeads();
       fetchStats();
     } catch (err) {
@@ -239,7 +233,7 @@ export default function HomePage() {
     }
   };
 
-  // Save AI Summary to Lead
+  // Save Summary to Lead
   const handleSaveSummary = async (leadId, summaryText) => {
     try {
       await fetch(`/api/leads/${leadId}`, {
@@ -247,7 +241,7 @@ export default function HomePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ai_summary: summaryText })
       });
-      showToast('AI Summary saved to lead profile');
+      showToast('Summary saved');
       fetchLeads();
     } catch (err) {
       showToast('Failed to save summary', 'error');
@@ -256,7 +250,7 @@ export default function HomePage() {
 
   // Reset Sample Data
   const handleResetData = async () => {
-    if (!window.confirm('Reset database with 5 fresh sample event leads? Any custom leads will be refreshed.')) {
+    if (!window.confirm('Reset sample leads database?')) {
       return;
     }
     setIsResetting(true);
@@ -264,7 +258,7 @@ export default function HomePage() {
       const res = await fetch('/api/seed', { method: 'POST' });
       const data = await res.json();
       if (data.success) {
-        showToast('Sample event leads reseeded successfully!');
+        showToast('Sample leads restored');
         fetchLeads();
         fetchStats();
       }
@@ -278,15 +272,15 @@ export default function HomePage() {
   // Export CSV
   const handleExport = () => {
     window.open('/api/export', '_blank');
-    showToast('Exporting leads to CSV...');
+    showToast('Exporting CSV...');
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
       
-      {/* Toast Notification */}
+      {/* Toast */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center space-x-2 px-4 py-3 rounded-xl bg-gray-900 border border-gray-700 shadow-2xl text-xs font-semibold text-white animate-bounce">
+        <div className="fixed bottom-5 right-5 z-50 flex items-center space-x-2 px-3.5 py-2.5 rounded-lg bg-slate-900 text-white text-xs font-medium shadow-lg">
           {toast.type === 'error' ? (
             <AlertCircle className="w-4 h-4 text-rose-400 flex-shrink-0" />
           ) : (
@@ -296,7 +290,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Main Header / Navigation */}
+      {/* Navigation */}
       <Navbar
         onNewLead={() => {
           setEditingLead(null);
@@ -310,111 +304,107 @@ export default function HomePage() {
         isResetting={isResetting}
       />
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
-        {/* Top Intelligence Stats Banner */}
+        {/* Stats Banner */}
         <StatsBanner
           stats={stats}
           onFilterPriority={(p) => setSelectedPriority(p)}
           onFilterStatus={(s) => setSelectedStatus(s)}
         />
 
-        {/* Filter, Search & View Controls Bar */}
-        <div className="rounded-2xl border border-gray-800/80 bg-gray-950/80 glass-card p-4 mb-6 shadow-lg">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        {/* Filter & Search Bar */}
+        <div className="rounded-lg border border-slate-200 bg-white p-3.5 mb-5 shadow-2xs">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
             
             {/* Search Input */}
             <div className="relative flex-1 min-w-[240px]">
-              <Search className="absolute left-3.5 top-2.5 w-4 h-4 text-gray-500" />
+              <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search leads by name, company, email, event, notes, or tags..."
+                placeholder="Search leads by name, company, email, event, or notes..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-9 py-2 rounded-xl bg-gray-900 border border-gray-800 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                className="w-full pl-9 pr-8 py-1.5 rounded-md bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-400 focus:bg-white"
               />
               {search && (
                 <button
                   onClick={() => setSearch('')}
-                  className="absolute right-3 top-2.5 text-gray-500 hover:text-white"
+                  className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600"
                 >
                   <X className="w-4 h-4" />
                 </button>
               )}
             </div>
 
-            {/* Filter Controls Group */}
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            {/* Filters */}
+            <div className="flex flex-wrap items-center gap-2">
               
-              {/* Event Filter Dropdown */}
-              <div className="relative">
-                <select
-                  value={selectedEvent}
-                  onChange={(e) => setSelectedEvent(e.target.value)}
-                  className="px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-xs font-medium text-gray-200 focus:outline-none focus:border-indigo-500 cursor-pointer"
-                >
-                  <option value="all">All Events ({eventsList.length})</option>
-                  {eventsList.map((ev, i) => (
-                    <option key={i} value={ev}>
-                      {ev}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {/* Event Filter */}
+              <select
+                value={selectedEvent}
+                onChange={(e) => setSelectedEvent(e.target.value)}
+                className="px-2.5 py-1.5 rounded-md bg-white border border-slate-200 text-xs font-medium text-slate-700 focus:outline-none focus:border-slate-400 cursor-pointer"
+              >
+                <option value="all">All Events ({eventsList.length})</option>
+                {eventsList.map((ev, i) => (
+                  <option key={i} value={ev}>
+                    {ev}
+                  </option>
+                ))}
+              </select>
 
-              {/* Status Filter Dropdown */}
-              <div className="relative">
-                <select
-                  value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="px-3 py-2 rounded-xl bg-gray-900 border border-gray-800 text-xs font-medium text-gray-200 focus:outline-none focus:border-indigo-500 cursor-pointer"
-                >
-                  <option value="all">All Stages</option>
-                  <option value="pending">⏳ Pending</option>
-                  <option value="drafted">📝 Draft Ready</option>
-                  <option value="sent">📤 Sent</option>
-                  <option value="followed_up">💬 Followed Up</option>
-                  <option value="closed">✅ Closed / Won</option>
-                </select>
-              </div>
+              {/* Status Filter */}
+              <select
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="px-2.5 py-1.5 rounded-md bg-white border border-slate-200 text-xs font-medium text-slate-700 focus:outline-none focus:border-slate-400 cursor-pointer"
+              >
+                <option value="all">All Stages</option>
+                <option value="pending">Pending</option>
+                <option value="drafted">Draft Ready</option>
+                <option value="sent">Sent</option>
+                <option value="followed_up">Followed Up</option>
+                <option value="closed">Closed</option>
+              </select>
 
-              {/* Priority Pill Filters */}
-              <div className="flex items-center bg-gray-900 p-1 rounded-xl border border-gray-800 text-xs">
+              {/* Priority Segmented Control */}
+              <div className="flex items-center bg-slate-100 p-0.5 rounded-md text-xs">
                 {['all', 'Hot', 'Warm', 'Cold'].map((p) => (
                   <button
                     key={p}
                     onClick={() => setSelectedPriority(p)}
-                    className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                    className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
                       selectedPriority === p
-                        ? 'bg-indigo-600 text-white shadow-sm'
-                        : 'text-gray-400 hover:text-gray-200'
+                        ? 'bg-white text-slate-900 shadow-2xs'
+                        : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
-                    {p === 'all' ? 'All' : p === 'Hot' ? '🔥 Hot' : p === 'Warm' ? '⚡ Warm' : '❄️ Cold'}
+                    {p === 'all' ? 'All' : p === 'Hot' ? 'High' : p === 'Warm' ? 'Medium' : 'Low'}
                   </button>
                 ))}
               </div>
 
-              {/* View Toggle: Table vs Kanban */}
-              <div className="flex items-center bg-gray-900 p-1 rounded-xl border border-gray-800 text-xs">
+              {/* View Toggle */}
+              <div className="flex items-center bg-slate-100 p-0.5 rounded-md text-xs">
                 <button
                   onClick={() => setViewMode('table')}
-                  className={`p-1.5 rounded-lg transition-all ${
-                    viewMode === 'table' ? 'bg-gray-800 text-indigo-400 shadow-sm' : 'text-gray-400 hover:text-white'
+                  className={`p-1.5 rounded transition-colors ${
+                    viewMode === 'table' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
                   }`}
                   title="Table View"
                 >
-                  <LayoutList className="w-4 h-4" />
+                  <LayoutList className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => setViewMode('kanban')}
-                  className={`p-1.5 rounded-lg transition-all ${
-                    viewMode === 'kanban' ? 'bg-gray-800 text-indigo-400 shadow-sm' : 'text-gray-400 hover:text-white'
+                  className={`p-1.5 rounded transition-colors ${
+                    viewMode === 'kanban' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500 hover:text-slate-800'
                   }`}
-                  title="Kanban Pipeline View"
+                  title="Board View"
                 >
-                  <Kanban className="w-4 h-4" />
+                  <Kanban className="w-3.5 h-3.5" />
                 </button>
               </div>
 
@@ -422,32 +412,32 @@ export default function HomePage() {
 
           </div>
 
-          {/* Active Filter Indicators */}
+          {/* Active Filter Row */}
           {(search || selectedEvent !== 'all' || selectedStatus !== 'all' || selectedPriority !== 'all') && (
-            <div className="mt-3 pt-3 border-t border-gray-800/80 flex flex-wrap items-center gap-2 text-xs">
-              <span className="text-gray-500 font-medium">Active Filters:</span>
+            <div className="mt-2.5 pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+              <span className="font-medium">Active Filters:</span>
               {search && (
-                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-gray-900 border border-gray-800 text-indigo-300">
-                  <span>Search: "{search}"</span>
-                  <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => setSearch('')} />
+                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                  <span>"{search}"</span>
+                  <X className="w-3 h-3 cursor-pointer hover:text-slate-900" onClick={() => setSearch('')} />
                 </span>
               )}
               {selectedEvent !== 'all' && (
-                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-gray-900 border border-gray-800 text-indigo-300">
+                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-100 text-slate-700">
                   <span>Event: {selectedEvent}</span>
-                  <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => setSelectedEvent('all')} />
+                  <X className="w-3 h-3 cursor-pointer hover:text-slate-900" onClick={() => setSelectedEvent('all')} />
                 </span>
               )}
               {selectedStatus !== 'all' && (
-                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-gray-900 border border-gray-800 text-indigo-300">
+                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-100 text-slate-700">
                   <span>Status: {selectedStatus}</span>
-                  <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => setSelectedStatus('all')} />
+                  <X className="w-3 h-3 cursor-pointer hover:text-slate-900" onClick={() => setSelectedStatus('all')} />
                 </span>
               )}
               {selectedPriority !== 'all' && (
-                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-gray-900 border border-gray-800 text-indigo-300">
+                <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-100 text-slate-700">
                   <span>Priority: {selectedPriority}</span>
-                  <X className="w-3 h-3 cursor-pointer hover:text-white" onClick={() => setSelectedPriority('all')} />
+                  <X className="w-3 h-3 cursor-pointer hover:text-slate-900" onClick={() => setSelectedPriority('all')} />
                 </span>
               )}
               <button
@@ -457,19 +447,19 @@ export default function HomePage() {
                   setSelectedStatus('all');
                   setSelectedPriority('all');
                 }}
-                className="text-[11px] text-gray-400 hover:text-rose-400 underline ml-1"
+                className="text-[11px] text-slate-500 hover:text-rose-600 underline ml-1"
               >
-                Clear all filters
+                Clear all
               </button>
             </div>
           )}
         </div>
 
-        {/* Data Views (Table or Kanban) */}
+        {/* Data View */}
         {isLoading ? (
-          <div className="py-20 flex flex-col items-center justify-center space-y-3">
-            <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-            <p className="text-xs text-gray-400 font-medium">Loading event leads...</p>
+          <div className="py-16 flex flex-col items-center justify-center space-y-2">
+            <Loader2 className="w-6 h-6 animate-spin text-slate-500" />
+            <p className="text-xs text-slate-500">Loading leads...</p>
           </div>
         ) : viewMode === 'table' ? (
           <LeadTable
@@ -515,17 +505,15 @@ export default function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-900 bg-gray-950 py-4 text-center text-xs text-gray-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <footer className="border-t border-slate-200 bg-white py-3.5 text-xs text-slate-500 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div>
-            <span className="font-semibold text-gray-400">LeadVortex AI</span> — Intelligent Event Lead & Follow-Up Manager
+            <span className="font-semibold text-slate-700">Event Lead Manager</span> — Capture & Follow-up
           </div>
-          <div className="flex items-center space-x-3 text-gray-500">
-            <span>Powered by Next.js & React</span>
+          <div className="flex items-center space-x-3 text-slate-500">
+            <span>React & Next.js</span>
             <span>•</span>
             <span>SQLite Database</span>
-            <span>•</span>
-            <span>AI Summarization & Drafts</span>
           </div>
         </div>
       </footer>

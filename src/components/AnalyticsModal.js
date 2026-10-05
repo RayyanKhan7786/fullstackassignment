@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { X, BarChart3, PieChart, Users, Flame, Calendar, TrendingUp, CheckCircle } from 'lucide-react';
+import { X } from 'lucide-react';
 
 export default function AnalyticsModal({ isOpen, onClose, stats }) {
   if (!isOpen || !stats) return null;
@@ -10,10 +10,10 @@ export default function AnalyticsModal({ isOpen, onClose, stats }) {
 
   const statusMap = {
     pending: { label: 'Pending', count: 0, color: 'bg-amber-500' },
-    drafted: { label: 'Draft Ready', count: 0, color: 'bg-purple-500' },
+    drafted: { label: 'Draft Ready', count: 0, color: 'bg-indigo-500' },
     sent: { label: 'Sent', count: 0, color: 'bg-blue-500' },
     followed_up: { label: 'Followed Up', count: 0, color: 'bg-emerald-500' },
-    closed: { label: 'Closed / Won', count: 0, color: 'bg-gray-400' }
+    closed: { label: 'Closed', count: 0, color: 'bg-slate-400' }
   };
 
   (stats.statusCounts || []).forEach(sc => {
@@ -23,9 +23,9 @@ export default function AnalyticsModal({ isOpen, onClose, stats }) {
   });
 
   const priorityMap = {
-    Hot: { label: 'Hot 🔥', count: 0, color: 'bg-rose-500' },
-    Warm: { label: 'Warm ⚡', count: 0, color: 'bg-amber-500' },
-    Cold: { label: 'Cold ❄️', count: 0, color: 'bg-cyan-500' }
+    Hot: { label: 'High Priority', count: 0, color: 'bg-rose-500' },
+    Warm: { label: 'Medium Priority', count: 0, color: 'bg-amber-500' },
+    Cold: { label: 'Low Priority', count: 0, color: 'bg-slate-400' }
   };
 
   (stats.priorityCounts || []).forEach(pc => {
@@ -35,27 +35,22 @@ export default function AnalyticsModal({ isOpen, onClose, stats }) {
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-      <div className="relative w-full max-w-3xl rounded-2xl border border-gray-800 bg-gray-950 p-6 shadow-2xl my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 overflow-y-auto">
+      <div className="relative w-full max-w-2xl rounded-lg border border-slate-200 bg-white p-6 shadow-xl my-8">
         
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-gray-800">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 rounded-xl bg-indigo-500/20 border border-indigo-500/30 text-indigo-400">
-              <BarChart3 className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-white">
-                Event Lead Intelligence & Pipeline Analytics
-              </h3>
-              <p className="text-xs text-gray-400">
-                Performance metrics, follow-up velocity, and event ROI
-              </p>
-            </div>
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div>
+            <h3 className="text-base font-bold text-slate-900">
+              Pipeline & Event Analytics
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Overview of lead status, priorities, and event performance
+            </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+            className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100"
           >
             <X className="w-5 h-5" />
           </button>
@@ -63,41 +58,41 @@ export default function AnalyticsModal({ isOpen, onClose, stats }) {
 
         {/* Top KPIs */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-          <div className="p-3 rounded-xl bg-gray-900 border border-gray-800">
-            <span className="text-[11px] text-gray-400">Total Leads Met</span>
-            <div className="text-2xl font-bold text-white mt-1">{total}</div>
+          <div className="p-3 rounded-md bg-slate-50 border border-slate-200">
+            <span className="text-[11px] font-medium text-slate-500">Total Leads</span>
+            <div className="text-xl font-bold text-slate-900 mt-0.5">{total}</div>
           </div>
-          <div className="p-3 rounded-xl bg-gray-900 border border-gray-800">
-            <span className="text-[11px] text-gray-400">Hot Opportunities</span>
-            <div className="text-2xl font-bold text-rose-400 mt-1">{stats.hotLeadsCount || 0}</div>
+          <div className="p-3 rounded-md bg-slate-50 border border-slate-200">
+            <span className="text-[11px] font-medium text-slate-500">High Priority</span>
+            <div className="text-xl font-bold text-slate-900 mt-0.5">{stats.hotLeadsCount || 0}</div>
           </div>
-          <div className="p-3 rounded-xl bg-gray-900 border border-gray-800">
-            <span className="text-[11px] text-gray-400">Pending Action</span>
-            <div className="text-2xl font-bold text-amber-400 mt-1">{stats.pendingFollowUps || 0}</div>
+          <div className="p-3 rounded-md bg-slate-50 border border-slate-200">
+            <span className="text-[11px] font-medium text-slate-500">Pending Action</span>
+            <div className="text-xl font-bold text-slate-900 mt-0.5">{stats.pendingFollowUps || 0}</div>
           </div>
-          <div className="p-3 rounded-xl bg-gray-900 border border-gray-800">
-            <span className="text-[11px] text-gray-400">Conversion / Followed</span>
-            <div className="text-2xl font-bold text-emerald-400 mt-1">{stats.conversionRate || 0}%</div>
+          <div className="p-3 rounded-md bg-slate-50 border border-slate-200">
+            <span className="text-[11px] font-medium text-slate-500">Follow-up Rate</span>
+            <div className="text-xl font-bold text-slate-900 mt-0.5">{stats.conversionRate || 0}%</div>
           </div>
         </div>
 
-        {/* Section 1: Pipeline Stage Progress Bars */}
-        <div className="mt-6">
-          <h4 className="text-xs font-semibold text-gray-300 uppercase tracking-wider mb-3">
+        {/* Pipeline Distribution */}
+        <div className="mt-5">
+          <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2.5">
             Pipeline Distribution
           </h4>
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {Object.entries(statusMap).map(([key, item]) => {
               const pct = total > 0 ? Math.round((item.count / total) * 100) : 0;
               return (
                 <div key={key} className="space-y-1">
                   <div className="flex justify-between text-xs">
-                    <span className="text-gray-300 font-medium">{item.label}</span>
-                    <span className="text-gray-400">{item.count} leads ({pct}%)</span>
+                    <span className="text-slate-700 font-medium">{item.label}</span>
+                    <span className="text-slate-500">{item.count} leads ({pct}%)</span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-gray-900 overflow-hidden">
+                  <div className="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
                     <div
-                      className={`h-full ${item.color} rounded-full transition-all duration-500`}
+                      className={`h-full ${item.color} rounded-full`}
                       style={{ width: `${pct}%` }}
                     />
                   </div>
@@ -107,25 +102,25 @@ export default function AnalyticsModal({ isOpen, onClose, stats }) {
           </div>
         </div>
 
-        {/* Section 2: Priority Distribution & Top Events */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+        {/* Priority & Top Events */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
           
           {/* Priority */}
-          <div className="p-4 rounded-xl bg-gray-900/60 border border-gray-800">
-            <h4 className="text-xs font-semibold text-gray-300 uppercase tracking-wider mb-3">
-              Intent / Priority Breakdown
+          <div className="p-3.5 rounded-md bg-slate-50 border border-slate-200">
+            <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2.5">
+              Priority Breakdown
             </h4>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {Object.entries(priorityMap).map(([key, item]) => {
                 const pct = total > 0 ? Math.round((item.count / total) * 100) : 0;
                 return (
-                  <div key={key} className="flex items-center justify-between">
-                    <span className="text-xs text-gray-300">{item.label}</span>
+                  <div key={key} className="flex items-center justify-between text-xs">
+                    <span className="text-slate-700">{item.label}</span>
                     <div className="flex items-center space-x-2">
-                      <div className="w-24 h-1.5 rounded-full bg-gray-800 overflow-hidden">
+                      <div className="w-20 h-1.5 rounded-full bg-slate-200 overflow-hidden">
                         <div className={`h-full ${item.color}`} style={{ width: `${pct}%` }} />
                       </div>
-                      <span className="text-xs font-bold text-white w-6 text-right">{item.count}</span>
+                      <span className="font-semibold text-slate-900 w-4 text-right">{item.count}</span>
                     </div>
                   </div>
                 );
@@ -134,21 +129,21 @@ export default function AnalyticsModal({ isOpen, onClose, stats }) {
           </div>
 
           {/* Top Events */}
-          <div className="p-4 rounded-xl bg-gray-900/60 border border-gray-800">
-            <h4 className="text-xs font-semibold text-gray-300 uppercase tracking-wider mb-3">
-              Top Yielding Events
+          <div className="p-3.5 rounded-md bg-slate-50 border border-slate-200">
+            <h4 className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2.5">
+              Top Events
             </h4>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {(stats.topEvents || []).length === 0 ? (
-                <p className="text-xs text-gray-500">No event records yet.</p>
+                <p className="text-xs text-slate-400">No events yet.</p>
               ) : (
                 stats.topEvents.map((ev, i) => (
-                  <div key={i} className="flex items-center justify-between text-xs py-1 border-b border-gray-850">
-                    <span className="text-gray-300 truncate max-w-[170px]" title={ev.event}>
+                  <div key={i} className="flex items-center justify-between text-xs py-0.5 border-b border-slate-200/60 last:border-0">
+                    <span className="text-slate-700 truncate max-w-[160px]" title={ev.event}>
                       {ev.event}
                     </span>
-                    <span className="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 font-bold border border-indigo-500/20">
-                      {ev.count} leads
+                    <span className="px-1.5 py-0.2 rounded bg-slate-200 text-slate-800 font-semibold text-[11px]">
+                      {ev.count}
                     </span>
                   </div>
                 ))
@@ -158,12 +153,12 @@ export default function AnalyticsModal({ isOpen, onClose, stats }) {
 
         </div>
 
-        {/* Close button */}
-        <div className="mt-6 pt-4 border-t border-gray-800 flex justify-end">
+        {/* Close */}
+        <div className="mt-5 pt-3 border-t border-slate-100 flex justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-300 hover:text-white bg-gray-900 hover:bg-gray-800 transition-colors"
+            className="px-3.5 py-1.5 rounded-md text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors"
           >
             Done
           </button>

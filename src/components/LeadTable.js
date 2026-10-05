@@ -1,33 +1,30 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { 
-  Sparkles, 
   Mail, 
   Phone, 
   Building2, 
   Calendar, 
-  MoreVertical, 
   Edit3, 
   Trash2, 
   FileText, 
-  ExternalLink,
-  ChevronDown,
-  ArrowUpDown
+  ArrowUpDown,
+  FileEdit
 } from 'lucide-react';
 
 const STATUS_CONFIG = {
-  pending: { label: 'Pending', bg: 'bg-amber-500/10 text-amber-400 border-amber-500/30' },
-  drafted: { label: 'Draft Ready', bg: 'bg-purple-500/10 text-purple-400 border-purple-500/30' },
-  sent: { label: 'Message Sent', bg: 'bg-blue-500/10 text-blue-400 border-blue-500/30' },
-  followed_up: { label: 'Followed Up', bg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' },
-  closed: { label: 'Closed / Won', bg: 'bg-gray-500/20 text-gray-300 border-gray-500/30' }
+  pending: { label: 'Pending', bg: 'bg-amber-50 text-amber-800 border-amber-200' },
+  drafted: { label: 'Draft Ready', bg: 'bg-indigo-50 text-indigo-800 border-indigo-200' },
+  sent: { label: 'Sent', bg: 'bg-blue-50 text-blue-800 border-blue-200' },
+  followed_up: { label: 'Followed Up', bg: 'bg-emerald-50 text-emerald-800 border-emerald-200' },
+  closed: { label: 'Closed', bg: 'bg-slate-100 text-slate-700 border-slate-200' }
 };
 
 const PRIORITY_CONFIG = {
-  Hot: { label: 'Hot', icon: '🔥', bg: 'bg-rose-500/15 text-rose-400 border-rose-500/30' },
-  Warm: { label: 'Warm', icon: '⚡', bg: 'bg-amber-500/15 text-amber-400 border-amber-500/30' },
-  Cold: { label: 'Cold', icon: '❄️', bg: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30' }
+  Hot: { label: 'High', bg: 'bg-rose-50 text-rose-700 border-rose-200' },
+  Warm: { label: 'Medium', bg: 'bg-amber-50 text-amber-700 border-amber-200' },
+  Cold: { label: 'Low', bg: 'bg-slate-100 text-slate-600 border-slate-200' }
 };
 
 export default function LeadTable({
@@ -41,8 +38,6 @@ export default function LeadTable({
   sortBy,
   sortOrder
 }) {
-  const [activeMenuId, setActiveMenuId] = useState(null);
-
   const getInitials = (name) => {
     if (!name) return 'L';
     return name
@@ -53,78 +48,63 @@ export default function LeadTable({
       .toUpperCase();
   };
 
-  const getRandomGradient = (name) => {
-    const gradients = [
-      'from-indigo-600 to-purple-600',
-      'from-pink-600 to-rose-600',
-      'from-emerald-600 to-teal-600',
-      'from-amber-600 to-orange-600',
-      'from-blue-600 to-cyan-600'
-    ];
-    let hash = 0;
-    for (let i = 0; i < (name || '').length; i++) {
-      hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return gradients[Math.abs(hash) % gradients.length];
-  };
-
   return (
-    <div className="w-full overflow-hidden rounded-xl border border-gray-800/80 bg-gray-950/60 glass-card shadow-xl">
+    <div className="w-full overflow-hidden rounded-lg border border-slate-200 bg-white">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-gray-800/80 bg-gray-900/60 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            <tr className="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-500">
               
-              <th scope="col" className="py-3.5 pl-4 pr-3 sm:pl-6 cursor-pointer hover:text-white" onClick={() => onSort('name')}>
+              <th scope="col" className="py-3 pl-4 pr-3 sm:pl-6 cursor-pointer hover:text-slate-800" onClick={() => onSort('name')}>
                 <div className="flex items-center space-x-1.5">
-                  <span>Lead Contact</span>
+                  <span>Contact</span>
                   <ArrowUpDown className="w-3.5 h-3.5 opacity-60" />
                 </div>
               </th>
 
-              <th scope="col" className="px-3 py-3.5 cursor-pointer hover:text-white" onClick={() => onSort('company')}>
+              <th scope="col" className="px-3 py-3 cursor-pointer hover:text-slate-800" onClick={() => onSort('company')}>
                 <div className="flex items-center space-x-1.5">
                   <span>Company</span>
                   <ArrowUpDown className="w-3.5 h-3.5 opacity-60" />
                 </div>
               </th>
 
-              <th scope="col" className="px-3 py-3.5 cursor-pointer hover:text-white" onClick={() => onSort('event')}>
+              <th scope="col" className="px-3 py-3 cursor-pointer hover:text-slate-800" onClick={() => onSort('event')}>
                 <div className="flex items-center space-x-1.5">
-                  <span>Met At Event</span>
+                  <span>Event</span>
                   <ArrowUpDown className="w-3.5 h-3.5 opacity-60" />
                 </div>
               </th>
 
-              <th scope="col" className="px-3 py-3.5 cursor-pointer hover:text-white" onClick={() => onSort('priority')}>
+              <th scope="col" className="px-3 py-3 cursor-pointer hover:text-slate-800" onClick={() => onSort('priority')}>
                 <div className="flex items-center space-x-1.5">
                   <span>Priority</span>
                   <ArrowUpDown className="w-3.5 h-3.5 opacity-60" />
                 </div>
               </th>
 
-              <th scope="col" className="px-3 py-3.5">
-                <span>Follow-up Status</span>
+              <th scope="col" className="px-3 py-3">
+                <span>Status</span>
               </th>
 
-              <th scope="col" className="px-3 py-3.5">
-                <span>Interaction Notes & AI Insights</span>
+              <th scope="col" className="px-3 py-3">
+                <span>Notes & Summary</span>
               </th>
 
-              <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6 text-right">
+              <th scope="col" className="relative py-3 pl-3 pr-4 sm:pr-6 text-right">
                 <span>Actions</span>
               </th>
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-gray-800/60 text-sm">
+          <tbody className="divide-y divide-slate-100 text-sm">
             {leads.length === 0 ? (
               <tr>
-                <td colSpan={7} className="py-12 text-center text-gray-500">
-                  <div className="flex flex-col items-center justify-center space-y-2">
-                    <FileText className="w-8 h-8 text-gray-600" />
-                    <p className="text-base font-medium text-gray-400">No event leads match your search criteria</p>
-                    <p className="text-xs text-gray-500">Try adjusting your filters or add a new lead above.</p>
+                <td colSpan={7} className="py-12 text-center text-slate-400">
+                  <div className="flex flex-col items-center justify-center space-y-1.5">
+                    <FileText className="w-6 h-6 text-slate-300" />
+                    <p className="text-sm font-medium text-slate-600">No leads found</p>
+                    <p className="text-xs text-slate-400">Try changing your filters or add a new contact.</p>
                   </div>
                 </td>
               </tr>
@@ -132,34 +112,33 @@ export default function LeadTable({
               leads.map((lead) => {
                 const statusInfo = STATUS_CONFIG[lead.follow_up_status] || STATUS_CONFIG.pending;
                 const priorityInfo = PRIORITY_CONFIG[lead.priority] || PRIORITY_CONFIG.Warm;
-                const avatarGradient = getRandomGradient(lead.name);
 
                 return (
                   <tr 
                     key={lead.id}
-                    className="hover:bg-gray-900/40 transition-colors group"
+                    className="hover:bg-slate-50 transition-colors"
                   >
-                    {/* Lead Contact info */}
-                    <td className="py-4 pl-4 pr-3 sm:pl-6">
+                    {/* Contact */}
+                    <td className="py-3 pl-4 pr-3 sm:pl-6">
                       <div className="flex items-center space-x-3">
-                        <div className={`flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-br ${avatarGradient} flex items-center justify-center text-white text-xs font-bold shadow-sm`}>
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 text-xs font-semibold">
                           {getInitials(lead.name)}
                         </div>
                         <div>
-                          <div className="font-semibold text-gray-100 group-hover:text-indigo-300 transition-colors">
+                          <div className="font-semibold text-slate-900">
                             {lead.name}
                           </div>
-                          <div className="flex items-center space-x-1.5 text-xs text-gray-400">
-                            <Mail className="w-3 h-3 text-gray-500" />
+                          <div className="flex items-center space-x-1.5 text-xs text-slate-500">
+                            <Mail className="w-3 h-3 text-slate-400" />
                             <a 
                               href={`mailto:${lead.email}`}
-                              className="hover:text-indigo-400 hover:underline"
+                              className="hover:text-slate-900 hover:underline"
                             >
                               {lead.email}
                             </a>
                           </div>
                           {lead.phone && (
-                            <div className="flex items-center space-x-1 text-[11px] text-gray-500 mt-0.5">
+                            <div className="flex items-center space-x-1 text-[11px] text-slate-400 mt-0.5">
                               <Phone className="w-2.5 h-2.5" />
                               <span>{lead.phone}</span>
                             </div>
@@ -169,15 +148,15 @@ export default function LeadTable({
                     </td>
 
                     {/* Company */}
-                    <td className="px-3 py-4">
+                    <td className="px-3 py-3">
                       <div className="flex items-center space-x-1.5">
-                        <Building2 className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
-                        <span className="font-medium text-gray-200">{lead.company}</span>
+                        <Building2 className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                        <span className="font-medium text-slate-800">{lead.company}</span>
                       </div>
                       {lead.tags && (
-                        <div className="flex flex-wrap gap-1 mt-1.5">
+                        <div className="flex flex-wrap gap-1 mt-1">
                           {lead.tags.split(',').slice(0, 2).map((tag, i) => (
-                            <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-400">
+                            <span key={i} className="text-[10px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 border border-slate-200">
                               {tag.trim()}
                             </span>
                           ))}
@@ -185,101 +164,99 @@ export default function LeadTable({
                       )}
                     </td>
 
-                    {/* Event Met At */}
-                    <td className="px-3 py-4">
-                      <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-gray-900 border border-gray-800 text-xs text-gray-300">
-                        <Calendar className="w-3 h-3 text-indigo-400 flex-shrink-0" />
+                    {/* Event */}
+                    <td className="px-3 py-3">
+                      <div className="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded bg-slate-50 border border-slate-200 text-xs text-slate-700">
+                        <Calendar className="w-3 h-3 text-slate-400 flex-shrink-0" />
                         <span className="truncate max-w-[140px]" title={lead.event}>{lead.event}</span>
                       </div>
                     </td>
 
                     {/* Priority */}
-                    <td className="px-3 py-4">
-                      <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${priorityInfo.bg}`}>
-                        <span>{priorityInfo.icon}</span>
-                        <span>{priorityInfo.label}</span>
+                    <td className="px-3 py-3">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${priorityInfo.bg}`}>
+                        {priorityInfo.label}
                       </span>
                     </td>
 
-                    {/* Follow-up Status */}
-                    <td className="px-3 py-4">
+                    {/* Status dropdown */}
+                    <td className="px-3 py-3">
                       <select
                         value={lead.follow_up_status}
                         onChange={(e) => onStatusChange(lead.id, e.target.value)}
-                        className={`text-xs font-semibold rounded-lg px-2.5 py-1 border transition-all cursor-pointer bg-gray-900/90 focus:outline-none focus:ring-1 focus:ring-indigo-500 ${statusInfo.bg}`}
+                        className={`text-xs font-medium rounded px-2 py-1 border cursor-pointer focus:outline-none focus:ring-1 focus:ring-slate-400 ${statusInfo.bg}`}
                       >
-                        <option value="pending" className="bg-gray-900 text-amber-400">⏳ Pending</option>
-                        <option value="drafted" className="bg-gray-900 text-purple-400">📝 Draft Ready</option>
-                        <option value="sent" className="bg-gray-900 text-blue-400">📤 Message Sent</option>
-                        <option value="followed_up" className="bg-gray-900 text-emerald-400">💬 Followed Up</option>
-                        <option value="closed" className="bg-gray-900 text-gray-400">✅ Closed / Won</option>
+                        <option value="pending">Pending</option>
+                        <option value="drafted">Draft Ready</option>
+                        <option value="sent">Sent</option>
+                        <option value="followed_up">Followed Up</option>
+                        <option value="closed">Closed</option>
                       </select>
                     </td>
 
-                    {/* Notes & AI Summary */}
-                    <td className="px-3 py-4 max-w-xs">
-                      <div className="text-xs text-gray-300 line-clamp-2" title={lead.notes}>
-                        {lead.notes || <span className="italic text-gray-600">No notes captured</span>}
+                    {/* Notes & Summary */}
+                    <td className="px-3 py-3 max-w-xs">
+                      <div className="text-xs text-slate-600 line-clamp-2" title={lead.notes}>
+                        {lead.notes || <span className="italic text-slate-400">No notes</span>}
                       </div>
 
                       {lead.ai_summary ? (
-                        <div 
+                        <button
                           onClick={() => onOpenSummaryModal(lead)}
-                          className="mt-1.5 flex items-center space-x-1 text-[11px] text-purple-400 hover:text-purple-300 cursor-pointer font-medium"
+                          className="mt-1 flex items-center space-x-1 text-[11px] text-slate-600 hover:text-slate-900 font-medium"
                         >
-                          <Sparkles className="w-3 h-3 text-purple-400 animate-pulse" />
-                          <span>View AI Summary</span>
-                        </div>
+                          <FileText className="w-3 h-3 text-slate-500" />
+                          <span>View Summary</span>
+                        </button>
                       ) : (
                         <button
                           onClick={() => onOpenSummaryModal(lead)}
-                          className="mt-1 flex items-center space-x-1 text-[10px] text-gray-500 hover:text-purple-400 transition-colors"
+                          className="mt-1 flex items-center space-x-1 text-[11px] text-slate-400 hover:text-slate-700"
                         >
-                          <Sparkles className="w-2.5 h-2.5" />
-                          <span>Generate AI Summary</span>
+                          <span>+ Summarize</span>
                         </button>
                       )}
                     </td>
 
-                    {/* Action buttons */}
-                    <td className="py-4 pl-3 pr-4 sm:pr-6 text-right">
+                    {/* Actions */}
+                    <td className="py-3 pl-3 pr-4 sm:pr-6 text-right">
                       <div className="flex items-center justify-end space-x-1">
                         
-                        {/* Draft Follow-up AI Button */}
+                        {/* Draft Follow-up */}
                         <button
                           onClick={() => onOpenDraftModal(lead)}
-                          className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-sm shadow-purple-600/20 transition-all hover:scale-105"
-                          title="Generate AI Follow-up Message"
+                          className="inline-flex items-center space-x-1 px-2.5 py-1 rounded text-xs font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-colors"
+                          title="Draft Follow-up Message"
                         >
-                          <Sparkles className="w-3 h-3" />
-                          <span className="hidden xl:inline">AI Follow-up</span>
+                          <FileEdit className="w-3.5 h-3.5 text-slate-500" />
+                          <span className="hidden xl:inline">Draft Message</span>
                         </button>
 
-                        {/* Direct Mailto */}
+                        {/* Direct Email */}
                         <a
                           href={`mailto:${lead.email}?subject=Great%20meeting%20you%20at%20${encodeURIComponent(lead.event)}`}
-                          className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+                          className="p-1.5 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
                           title="Send Email"
                         >
-                          <Mail className="w-4 h-4" />
+                          <Mail className="w-3.5 h-3.5" />
                         </a>
 
-                        {/* Edit Lead */}
+                        {/* Edit */}
                         <button
                           onClick={() => onEditLead(lead)}
-                          className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-400 hover:bg-gray-800 transition-colors"
-                          title="Edit Lead Details"
+                          className="p-1.5 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                          title="Edit"
                         >
-                          <Edit3 className="w-4 h-4" />
+                          <Edit3 className="w-3.5 h-3.5" />
                         </button>
 
-                        {/* Delete Lead */}
+                        {/* Delete */}
                         <button
                           onClick={() => onDeleteLead(lead.id, lead.name)}
-                          className="p-1.5 rounded-lg text-gray-400 hover:text-rose-400 hover:bg-gray-800 transition-colors"
-                          title="Delete Lead"
+                          className="p-1.5 rounded text-slate-400 hover:text-rose-600 hover:bg-slate-100 transition-colors"
+                          title="Delete"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
 
                       </div>
