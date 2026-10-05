@@ -1,167 +1,139 @@
-# ⚡ LeadVortex AI — AI Event Lead & Follow-Up Manager
+# LeadVortex AI
 
-> An intelligent, full-stack event lead management platform built with **React**, **Next.js**, **Tailwind CSS**, and **SQLite**. Capture, synthesize, organize, and follow up with event contacts at lightning speed using integrated AI.
-
----
-
-## 🌟 Key Features
-
-### 1. 👥 Complete Lead Lifecycle Management (CRUD)
-- **Capture Leads**: Store `name`, `company`, `email`, `phone`, `event`, `notes`, `priority` (🔥 Hot, ⚡ Warm, ❄️ Cold), `follow_up_status` (Pending, Draft Ready, Message Sent, Followed Up, Closed), and custom `tags`.
-- **Edit & Delete**: Full modal-driven editing, instant status advancement, and safe deletion.
-- **Dual View Modes**:
-  - **Table View**: Rich data grid with sorting, quick actions, priority badges, and status selectors.
-  - **Kanban Pipeline View**: Visual 5-stage drag & advance board (Pending ➡️ Draft Ready ➡️ Sent ➡️ Followed Up ➡️ Closed).
-
-### 2. 🔍 Real-Time Search & Multi-Dimensional Filtering
-- **Faceted Search**: Instant full-text search across name, company, email, event, interaction notes, and tags.
-- **Event Filter**: Dynamically populated filter dropdown for all attended conferences/summits.
-- **Status & Priority Filters**: 1-click filter pills for Hot/Warm/Cold leads and pipeline stages.
-- **Dynamic Sorting**: Sort by Met Date, Name, Company, Event, or Priority in ASC/DESC order.
-
-### 3. ✨ AI-Powered Intelligence
-- **Interaction Note Summarizer**: Condenses rambling conversation notes into structured executive takeaways:
-  - Key Background & Context
-  - Core Pain Points / Topics Discussed
-  - Concrete Next Action Items
-  - Recommended Urgency & Lead Quality
-- **AI Follow-Up Message Generator**:
-  - Automatically drafts personalized emails referencing the exact event and discussion points.
-  - **4 Tone Presets**: *Warm & Professional*, *Executive Brief*, *Solution Pitch*, *Casual Coffee Chat*.
-  - **Custom Focus Input**: Add specific promotional links or call-to-action requests.
-  - **1-Click Mail Client Integration**: Generates ready-to-send `mailto:` links with subject & pre-filled body.
-  - **Direct Save & Mark as Drafted**: Persists draft to lead and automatically advances lead status.
-- **AI Quick Capture / Business Card OCR Extractor**:
-  - Paste messy handwritten notes, business card text, or voice transcriptions.
-  - AI extracts structured fields (*Name, Company, Email, Phone, Event, Notes, Priority*) ready for 1-click creation.
-
-### 4. 📊 Analytics Dashboard & CSV Export
-- **Pipeline Velocity**: Real-time KPI metrics for Total Leads, Hot Opportunities, Pending Actions, and Conversion Rate.
-- **Visual Distribution**: Pipeline stage breakdown bars and priority intent distribution.
-- **Top Yielding Events**: See which conferences produce the highest volume of high-intent leads.
-- **1-Click CSV Export**: Download a full, structured CSV export of all leads for CRM synchronization (Salesforce, HubSpot).
+**Event Lead & Follow-Up Management Platform**  
+A full-stack web application designed to capture, synthesize, organize, and accelerate outreach for event-driven business leads using integrated artificial intelligence.
 
 ---
 
-## 🛠️ Technology Stack
-
-| Layer | Technology | Rationale |
-|---|---|---|
-| **Frontend UI** | **React 19** (pure JavaScript/JSX) | Component-driven UI with state hooks, modals, and reactive updates |
-| **Styling** | **Tailwind CSS v4** + Vanilla CSS | Modern glassmorphism dark aesthetic, custom gradients, badge systems |
-| **Fullstack Framework** | **Next.js (App Router)** | High-performance server routes, fast bundling with Turbopack |
-| **Database** | **SQLite** (via `better-sqlite3`) | Zero-latency, zero-configuration local database with WAL mode |
-| **AI Engine** | **Google Gemini 1.5 Flash** + **Intelligent Built-In Engine** | Zero-config out-of-the-box mode with optional live Gemini API key support |
-| **Icons & Effects** | `lucide-react` & `canvas-confetti` | Crisp visual hierarchy and delightful micro-interactions |
-
----
-
-## 📐 Architecture & Key Design Decisions
-
-```
-event-lead-manager/
-├── src/
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── leads/              # GET (search/filter/sort), POST (create)
-│   │   │   │   └── [id]/           # GET, PUT (update), DELETE (remove)
-│   │   │   ├── ai/
-│   │   │   │   ├── summarize/      # AI meeting notes synthesis endpoint
-│   │   │   │   ├── draft-message/  # AI personalized follow-up generation
-│   │   │   │   └── smart-extract/  # Business card / raw notes parser
-│   │   │   ├── stats/              # Real-time pipeline & event analytics
-│   │   │   ├── export/             # Formatted CSV download stream
-│   │   │   └── seed/               # Sample data reset & reseed endpoint
-│   │   ├── globals.css             # Glassmorphism, animations, theme tokens
-│   │   ├── layout.js               # Metadata & responsive app shell
-│   │   └── page.js                 # Unified state orchestrator & UI views
-│   ├── components/
-│   │   ├── Navbar.js               # Logo, quick actions, primary CTA
-│   │   ├── StatsBanner.js          # KPI metric cards with 1-click filter hooks
-│   │   ├── LeadTable.js            # Interactive table with badges & actions
-│   │   ├── LeadKanban.js           # 5-column stage progression board
-│   │   ├── LeadModal.js            # Add/Edit modal with integrated AI tool
-│   │   ├── AiDraftModal.js         # Follow-up generator with tones & mailto
-│   │   ├── AiSummaryModal.js       # Executive summary modal
-│   │   ├── AiSmartCaptureModal.js  # Raw transcript / card text extractor
-│   │   ├── AnalyticsModal.js       # Visual charts & ROI breakdown
-│   │   └── SettingsModal.js        # AI key & sender personalization
-│   └── lib/
-│       ├── db.js                   # SQLite database manager & schema init
-│       └── ai.js                   # Gemini LLM + Contextual Fallback Engine
-├── data/
-│   └── leads.db                    # Persistent SQLite database file
-├── package.json
-└── README.md
-```
-
-### Key Architectural Choices:
-1. **Zero-Configuration Fallback AI Engine**:
-   - The application does **NOT** crash or block if the user has not configured a Gemini API key.
-   - It includes an intelligent contextual heuristic NLP synthesizer that generates realistic structured summaries, email drafts, and extracted lead profiles immediately.
-   - Users can optionally enter a live `GEMINI_API_KEY` in the UI Settings modal or via `.env` to switch to live Gemini 1.5 Flash LLM generation.
-2. **Persistent Embedded Database**:
-   - Uses `better-sqlite3` for persistent storage in `data/leads.db`.
-   - Automatically bootstraps with 5 realistic sample leads across major tech conferences (*TechCrunch Disrupt, AWS Summit, FinTech Nexus, SaaS Growth Summit, AI Hardware Expo*) upon first launch.
-3. **Pure JavaScript (No TypeScript)**:
-   - Scaffolding and components are built in clean, modern JavaScript/JSX with ES modules.
-
----
-
-## 🚀 Getting Started Locally
+## Quick Start
 
 ### Prerequisites
-- Node.js (v18.0.0 or higher)
-- npm (v9.0.0 or higher)
+- Node.js 18.0.0 or higher
+- npm 9.0.0 or higher
 
-### 1. Installation
+### Installation & Execution
+
 ```bash
-# Clone the repository
-git clone <your-repo-url>
-cd event-lead-manager
-
 # Install dependencies
 npm install
+
+# Start development server
+npm run dev
 ```
 
-### 2. (Optional) Set Environment Variables
-Create a `.env.local` file in the project root if you wish to use a live Google Gemini API key:
+The application will be available at **[http://localhost:3000](http://localhost:3000)**.
+
+> **Note:** The application includes a local heuristic AI fallback engine and functions fully without external configuration. To enable live Google Gemini LLM capabilities, provide an API key in the application Settings modal or via `.env.local`.
+
+---
+
+## Overview
+
+During conferences, trade shows, and networking summits, rapid post-event follow-up significantly impacts lead conversion rates. LeadVortex AI streamlines this workflow by combining structured lead management with automated AI assistance.
+
+### Key Capabilities
+
+1. **Lead Intake & Extraction** — Record contacts manually or extract structured data from unstructured text, business cards, and transcription notes.
+2. **Context Synthesis** — Automatically generate concise summaries, key discussion points, and action items from raw meeting notes.
+3. **Automated Follow-Up Generation** — Produce personalized email drafts calibrated by communication tone, complete with direct mail client integration.
+4. **Pipeline Tracking** — Track lead progression through five pipeline stages using either tabular or Kanban board views.
+
+---
+
+## Core Features
+
+| Feature | Details |
+|---|---|
+| **Dual Interface Views** | Interactive data table with sorting and filtering, alongside a 5-stage Kanban pipeline board. |
+| **Meeting Notes Summarizer** | AI-assisted extraction of pain points, business context, next steps, and urgency classification. |
+| **Follow-Up Generator** | Context-aware email drafting with configurable tones (Warm & Professional, Executive Brief, Solution Pitch, Casual Coffee). |
+| **Smart Text Extraction** | Parses unformatted text and notes to populate contact fields automatically. |
+| **Filtering & Search** | Multi-attribute search supporting query text, event origin, priority levels, and custom tags. |
+| **Analytics & Export** | Pipeline conversion tracking, event-yield breakdown, and 1-click CSV data export for CRM integration. |
+
+---
+
+## Application Workflow
+
+```mermaid
+graph LR
+    A[Capture / Paste Contact] --> B[AI Summary & Note Synthesis]
+    B --> C[Generate Tailored Follow-Up]
+    C --> D[One-Click Email Dispatch]
+    D --> E[Pipeline Advancement]
+```
+
+1. **Create Lead**: Add a new contact record or utilize Smart Capture to parse raw text.
+2. **Review Summary**: Access the AI Summary panel to review synthesized context and action items.
+3. **Draft Outreach**: Open the AI Follow-Up modal, select the desired tone, and generate tailored outreach copy.
+4. **Dispatch**: Use the integrated mail client launcher (`mailto:`) or copy text directly for external communication tools.
+5. **Manage Lifecycle**: Advance lead status across the Kanban board from *Pending* through *Closed*.
+
+---
+
+## Configuration
+
+The application is pre-configured with a zero-dependency fallback engine. Live AI generation can be configured via Google Gemini:
+
+### Option 1: In-App Configuration
+Open the **Settings** dialog from the navigation bar and enter your Gemini API key.
+
+### Option 2: Environment Variable
+Create a `.env.local` file in the project root directory:
+
 ```env
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
-*(Note: If omitted, the app will seamlessly use its built-in intelligent AI engine!)*
 
-### 3. Run Development Server
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+---
 
-### 4. Build for Production
-```bash
-npm run build
-npm run start
+## Technical Stack
+
+- **Frontend**: React 19, Tailwind CSS, Lucide React
+- **Fullstack Framework**: Next.js (App Router)
+- **Database**: SQLite (via `better-sqlite3`, stored locally at `data/leads.db`)
+- **AI Processing**: Google Gemini 1.5 Flash with built-in contextual fallback
+
+---
+
+## Project Structure
+
+```text
+├── src/
+│   ├── app/
+│   │   ├── api/leads/        # CRUD operations, search, and filtering
+│   │   ├── api/ai/           # Summarization, email drafting, text extraction
+│   │   ├── api/stats/        # Pipeline analytics and aggregate metrics
+│   │   ├── api/export/       # CSV export generation
+│   │   ├── globals.css       # Design tokens and styling
+│   │   └── page.js           # Main application shell and state orchestrator
+│   ├── components/           # UI components (Table, Kanban, Modals, Analytics)
+│   └── lib/                  # Database management and AI client logic
+├── data/leads.db             # Local SQLite database file
+└── package.json
 ```
 
 ---
 
-## 🧪 API Reference
+## REST API Reference
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/leads` | List leads with `search`, `event`, `status`, `priority`, `sortBy`, `sortOrder` |
+| `GET` | `/api/leads` | Retrieve leads with optional search, event, status, priority, and sorting parameters |
 | `POST` | `/api/leads` | Create a new lead record |
-| `GET` | `/api/leads/:id` | Fetch a single lead by ID |
-| `PUT` | `/api/leads/:id` | Update lead fields, notes, status, or AI drafts |
-| `DELETE` | `/api/leads/:id` | Delete lead record |
-| `POST` | `/api/ai/summarize` | Generate structured AI bullet points from meeting notes |
-| `POST` | `/api/ai/draft-message` | Generate personalized follow-up email draft with tone options |
-| `POST` | `/api/ai/smart-extract` | Extract structured lead fields from raw text or business card OCR |
-| `GET` | `/api/stats` | Retrieve aggregate metrics and event breakdown |
-| `GET` | `/api/export` | Download full database in CSV format |
-| `POST` | `/api/seed` | Reset and reseed database with realistic sample leads |
+| `GET` | `/api/leads/:id` | Retrieve a specific lead by ID |
+| `PUT` | `/api/leads/:id` | Update an existing lead record or pipeline status |
+| `DELETE` | `/api/leads/:id` | Delete a lead record |
+| `POST` | `/api/ai/summarize` | Generate structured summary and takeaways from notes |
+| `POST` | `/api/ai/draft-message` | Generate tailored follow-up email draft based on lead context |
+| `POST` | `/api/ai/smart-extract` | Parse unstructured text into structured lead attributes |
+| `GET` | `/api/stats` | Retrieve aggregate metrics and event yield statistics |
+| `GET` | `/api/export` | Download full dataset in CSV format |
+| `POST` | `/api/seed` | Reset and initialize database with sample dataset |
 
 ---
 
-## 📄 License
-MIT License. Built for the Technical Assignment.
+## License
+
+This project is licensed under the MIT License.
+
